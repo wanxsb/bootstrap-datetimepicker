@@ -1,11 +1,10 @@
 # bootstrap-datetimepicker
 
-This package is forked from the project:
+This package is forked from the project:[bootstrap-datetimepicker-rails](https://github.com/lubieniebieski/bootstrap-datetimepicker-rails)
 	
-	[bootstrap-datetimepicker-rails](https://github.com/lubieniebieski/bootstrap-datetimepicker-rails)
-	
-	However, this package has extends the bootstrap-datetimepicker-rails library by add support to set forbidden dates. 
-	It means that you can set some of the dates which is forbidden to choose by users.
+However, this package has extends the bootstrap-datetimepicker-rails library by add support to set forbidden dates. 
+
+It means that you can set some of the dates which is forbidden to choose by users.
 
 ## Installation
 
