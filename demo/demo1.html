@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <title>Bootstrap, from Twitter</title>
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+	<link href="../assets/stylesheets/bootstrap-datetimepicker.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="container">
+
+      <h1>Bootstrap starter template</h1>
+      <div class="row-fluid">
+		<div class="well">
+			<div id="datetimepicker1" class="input-append date">
+			<input data-format="dd/MM/yyyy" type="text"></input>
+			<span class="add-on">
+			  <i data-time-icon="icon-time" data-date-icon="icon-calendar">
+			  </i>
+			</span>
+			</div>
+		</div>
+	  </div>
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="common/jquery.js"></script>
+	<script src="../assets/javascripts/bootstrap-datetimepicker.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+	$('#datetimepicker1').datetimepicker({
+	  language: 'pt-BR',
+	  forbiddenDates:[
+		'12/03/2013',
+		'14/03/2013',
+		'15/03/2013'
+	  ],
+	  pickTime:false
+	});
+	});
+	</script>
+</body></html>
