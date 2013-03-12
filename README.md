@@ -1,31 +1,43 @@
-# bootstrap-datetimepicker-rails
+# bootstrap-datetimepicker
 
-This gem packages the bootstrap-datetimepicker (JavaScripts & stylesheets) for Rails 3.1+ asset pipeline. It adds ability to use [bootstrap-datetimepicker plugin](http://tarruda.github.com/bootstrap-datetimepicker/) within your Rails app without puting files inside `vendor` directory.
+This package is forked from the project:
+	
+	[bootstrap-datetimepicker-rails]:https://github.com/lubieniebieski/bootstrap-datetimepicker-rails
+	
+	However, this package has extends the bootstrap-datetimepicker-rails library by add support to set forbidden dates. It means that you can set some of the dates which is forbidden to choose by users.
 
 ## Installation
 
-Add this line to your application's Gemfile:
+The installation is very simple. 
 
-    gem 'bootstrap-datetimepicker-rails'
+Firstly, you need add these lines to your page header as other bootstrap libraries:
 
-Add the following directive to your Javascript manifest file (`application.js`):
+    <script src="../assets/javascripts/bootstrap-datetimepicker.js"></script>
+	<link href="../assets/stylesheets/bootstrap-datetimepicker.css" rel="stylesheet">
 
-    //= require bootstrap-datetimepicker
-
-If you want to include a localization file, also add the following directive:
-
-    //= require locales/bootstrap-datetimepicker.<locale>.js>
-
-Add the following line to your stylesheet file (`bootstrap_and_overrides.scss`):
-
-```scss
-@import 'bootstrap';
-@import 'bootstrap-datetimepicker';
-```
 
 ## Usage
 
-See the excellent demo provided by plugin's author - [@tarruda](https://github.com/tarruda) [here](http://tarruda.github.com/bootstrap-datetimepicker/).
+
+Then you can call the date time picker like this
+
+```javascript
+<script type="text/javascript">
+	$(document).ready(function() {
+	$('#datetimepicker1').datetimepicker({
+	  language: 'pt-BR',
+	  forbiddenDates:[
+		'12/03/2013',
+		'14/03/2013',
+		'15/03/2013'
+	  ],
+	  pickTime:false
+	});
+	});
+	</script>
+```
+
+You can refer the [demo] https://github.com/wanxsb/bootstrap-datetimepicker/blob/master/demo/demo1.html in this project.
 
 ## Contributing
 
