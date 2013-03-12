@@ -2,9 +2,9 @@
  * @license
  * =========================================================
  * bootstrap-datetimepicker.js 
- * http://www.eyecon.ro/bootstrap-datepicker
+ * https://github.com/wanxsb/bootstrap-datetimepicker
  * =========================================================
- * Copyright 2012 Stefan Petre
+ * Copyright 2012 wanxsb
  *
  * Contributions:
  *  - Andrew Rowls
@@ -106,6 +106,7 @@
           break;
         }
       }
+	  this.parseForbiddenDate(options.forbiddenDates);
       this.startViewMode = this.viewMode;
       this.weekStart = options.weekStart||this.$element.data('date-weekstart')||0;
       this.weekEnd = this.weekStart === 0 ? 6 : this.weekStart - 1;
@@ -120,6 +121,19 @@
       this.showMode();
       this._attachDatePickerEvents();
     },
+	
+	parseForbiddenDate:function(dates){
+		this.forbiddenDates = [];
+		if(!dates ||  !dates instanceof Array){
+			return ;
+		}
+		var index =0;
+		for(index =0; index < dates.length; index ++){
+			if(typeof dates[index] === 'string'){
+				this.forbiddenDates.push(this.parseDate(dates[index]));
+			}
+		}
+	},
 
     show: function(e) {
       this.widget.show();
@@ -319,6 +333,17 @@
       }
       this.widget.find('.datepicker-months td').append(html);
     },
+	
+	isInForbiddenDate: function(d){
+		var index = 0;
+		for(index = 0; index < this.forbiddenDates.length; index ++){
+			var currentDay = this.forbiddenDates[index];
+			if(d.valueOf() === currentDay.valueOf()){
+				return true;
+			}
+		}
+		return false;
+	},
 
     fillDate: function() {
       var year = this.viewDate.getUTCFullYear();
@@ -372,15 +397,19 @@
                     prevMonth.getUTCMonth() > month)) {
           clsName += ' new';
         }
-        if (prevMonth.valueOf() === currentDate.valueOf()) {
-          clsName += ' active';
-        }
-        if ((prevMonth.valueOf() + 86400000) <= this.startDate) {
-          clsName += ' disabled';
-        }
-        if (prevMonth.valueOf() > this.endDate) {
-          clsName += ' disabled';
-        }
+        if(this.isInForbiddenDate(prevMonth)){
+        	clsName += ' disable-choose';
+        }else {
+			if (prevMonth.valueOf() === currentDate.valueOf()) {
+			  clsName += ' active';
+			}
+			if ((prevMonth.valueOf() + 86400000) <= this.startDate) {
+			  clsName += ' disabled';
+			}
+			if (prevMonth.valueOf() > this.endDate) {
+			  clsName += ' disabled';
+			}
+		}
         html.push('<td class="day' + clsName + '">' + prevMonth.getUTCDate() + '</td>');
         if (prevMonth.getUTCDay() === this.weekEnd) {
           html.push('</tr>');
@@ -572,7 +601,9 @@
                 var day = parseInt(target.text(), 10) || 1;
                 var month = this.viewDate.getUTCMonth();
                 var year = this.viewDate.getUTCFullYear();
-                if (target.is('.old')) {
+                if(target.is('.disable-choose')){
+					break;
+				}else if (target.is('.old')) {
                   if (month === 0) {
                     month = 11;
                     year -= 1;
@@ -1047,7 +1078,8 @@
     pick12HourFormat: false,
     pickSeconds: true,
     startDate: -Infinity,
-    endDate: Infinity
+    endDate: Infinity,
+	forbiddenDates:[]
   };
   $.fn.datetimepicker.Constructor = DateTimePicker;
   var dpgId = 0;
