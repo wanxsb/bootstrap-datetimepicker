@@ -106,7 +106,10 @@
           break;
         }
       }
-	  this.parseForbiddenDate(options.forbiddenDates);
+	  	
+			this.isAllowToShow = options.isAllowToShow;
+			this.disableDateMode = options.disableDateMode
+			this.disableDates = this.parseDateList(options.disableDates);
       this.startViewMode = this.viewMode;
       this.weekStart = options.weekStart||this.$element.data('date-weekstart')||0;
       this.weekEnd = this.weekStart === 0 ? 6 : this.weekStart - 1;
@@ -122,17 +125,18 @@
       this._attachDatePickerEvents();
     },
 	
-	parseForbiddenDate:function(dates){
-		this.forbiddenDates = [];
+	parseDateList:function(dates){
+		var	result = [];
 		if(!dates ||  !dates instanceof Array){
-			return ;
+			return result;
 		}
 		var index =0;
 		for(index =0; index < dates.length; index ++){
 			if(typeof dates[index] === 'string'){
-				this.forbiddenDates.push(this.parseDate(dates[index]));
+				result.push(this.parseDate(dates[index]) );
 			}
 		}
+    return result;
 	},
 
     show: function(e) {
@@ -334,16 +338,34 @@
       this.widget.find('.datepicker-months td').append(html);
     },
 	
-	isInForbiddenDate: function(d){
-		var index = 0;
-		for(index = 0; index < this.forbiddenDates.length; index ++){
-			var currentDay = this.forbiddenDates[index];
-			if(d.valueOf() === currentDay.valueOf()){
-				return true;
+		isInDisableDates: function(d){
+			return this.isInDates(d, this.disableDates);
+		},
+
+		isInDates:function(d, dates){
+			var index = 0;
+			for(index = 0; index < dates.length; index ++){
+				var currentDay = dates[index];
+				if(d.valueOf() === currentDay.valueOf()){
+					return true;
+				}
 			}
-		}
-		return false;
-	},
+			return false;
+		},
+
+		judgeClassByCalendar:function(prevMonth, currentDate){
+			var clsName = "";
+			if (prevMonth.valueOf() === currentDate.valueOf()) {
+				clsName += ' active';
+			}
+			if ((prevMonth.valueOf() + 86400000) <= this.startDate) {
+				clsName += ' disabled';
+			}
+			if (prevMonth.valueOf() > this.endDate) {
+				clsName += ' disabled';
+			}
+			return clsName;
+		},
 
     fillDate: function() {
       var year = this.viewDate.getUTCFullYear();
@@ -397,24 +419,37 @@
                     prevMonth.getUTCMonth() > month)) {
           clsName += ' new';
         }
-        if(this.isInForbiddenDate(prevMonth)){
-        	clsName += ' disable-choose';
-        }else {
-			if (prevMonth.valueOf() === currentDate.valueOf()) {
-			  clsName += ' active';
-			}
-			if ((prevMonth.valueOf() + 86400000) <= this.startDate) {
-			  clsName += ' disabled';
-			}
-			if (prevMonth.valueOf() > this.endDate) {
-			  clsName += ' disabled';
-			}
-		}
-        html.push('<td class="day' + clsName + '">' + prevMonth.getUTCDate() + '</td>');
-        if (prevMonth.getUTCDay() === this.weekEnd) {
-          html.push('</tr>');
-        }
-        prevMonth.setUTCDate(prevMonth.getUTCDate() + 1);
+
+				if(this.disableDateMode === 'forbidden'){
+					if(this.isInDisableDates(prevMonth)){
+						clsName += ' disable-choose';
+					}else if(this.isAllowToShow && !this.isAllowToShow(prevMonth, $.proxy(this.parseDate, this))){
+						clsName += ' disable-choose';
+					}else{
+						clsName += this.judgeClassByCalendar(prevMonth, currentDate);
+					}
+				}else if(this.disableDateMode === 'allow'){
+					if(this.isInDisableDates(prevMonth)){
+						clsName += this.judgeClassByCalendar(prevMonth, currentDate);
+					}else{
+						if(this.isAllowToShow && !this.isAllowToShow(prevMonth, $.proxy(this.parseDate, this))){
+							clsName += ' disable-choose';
+						}else{
+							clsName += this.judgeClassByCalendar(prevMonth, currentDate);
+						}
+					}
+				}else{
+						if(this.isAllowToShow && !this.isAllowToShow(prevMonth, $.proxy(this.parseDate, this))){
+							clsName += ' disable-choose';
+						}else{
+							clsName += this.judgeClassByCalendar(prevMonth, currentDate);
+						}
+				}
+		    html.push('<td class="day' + clsName + '">' + prevMonth.getUTCDate() + '</td>');
+		    if (prevMonth.getUTCDay() === this.weekEnd) {
+		      html.push('</tr>');
+		    }
+      	prevMonth.setUTCDate(prevMonth.getUTCDate() + 1);
       }
       this.widget.find('.datepicker-days tbody').empty().append(html.join(''));
       var currentYear = this._date.getUTCFullYear();
@@ -1071,6 +1106,15 @@
     });
   };
 
+/**
+ * disableDateMode: can be valued to 'forbidden', 'allow' or 'none'(default value), if it is valued 'forbidden',
+ * disableDates will be used to forbidden part of dates while disableDates will be used to allow
+ * part of dates if the disableDateMode valued 'allow'. Besides, you can also define the function isAllowToShow to check each date by your self.
+ * the isAllowToShow should have the following form: function isAllowToShow(date, parseDateFn). when it return true,
+ * it means that the date is allowed to show, while false means that it is forbidden to show. 
+ * If isAllowToShow and disableDateMode are both defined and disableDateMode is not valued 'none', then both option
+ * will take effect. however, disableDateMode will have high priority.
+ */
   $.fn.datetimepicker.defaults = {
     maskInput: false,
     pickDate: true,
@@ -1079,7 +1123,9 @@
     pickSeconds: true,
     startDate: -Infinity,
     endDate: Infinity,
-	forbiddenDates:[]
+		disableDateMode:'none',
+		disableDates:[],
+		isAllowToShow:undefined
   };
   $.fn.datetimepicker.Constructor = DateTimePicker;
   var dpgId = 0;

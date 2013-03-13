@@ -19,7 +19,7 @@
       <div class="row-fluid">
 		<div class="well">
 			<div id="datetimepicker1" class="input-append date">
-			<input data-format="dd/MM/yyyy" type="text"></input>
+			<input data-format="dd/MM/yyyy hh:mm:ss" type="text"></input>
 			<span class="add-on">
 			  <i data-time-icon="icon-time" data-date-icon="icon-calendar">
 			  </i>
@@ -37,15 +37,19 @@
     <script src="bootstrap/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function() {
-	$('#datetimepicker1').datetimepicker({
-	  language: 'pt-BR',
-	  forbiddenDates:[
-		'12/03/2013',
-		'14/03/2013',
-		'15/03/2013'
-	  ],
-	  pickTime:false
-	});
+		$('#datetimepicker1').datetimepicker({
+			language: 'en',
+			disableDates:[
+			'12/03/2013',
+			'14/03/2013',
+			'15/03/2013'
+			],
+			disableDateMode:'allow',
+			pickTime:false,
+		  isAllowToShow:function(d, parseDateFn){
+		    return (d.valueOf() !== parseDateFn('17/03/2013 00:00:00').valueOf());
+		  }
+		});
 	});
 	</script>
 </body></html>
