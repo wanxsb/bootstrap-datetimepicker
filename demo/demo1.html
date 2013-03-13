@@ -40,12 +40,11 @@
 		$('#datetimepicker1').datetimepicker({
 			language: 'en',
 			disableDates:[
-			'12/03/2013',
-			'14/03/2013',
-			'15/03/2013'
+			'12/03/2013 00:00:00',
+			'14/03/2013 00:00:00',
+			'15/03/2013 00:00:00'
 			],
 			disableDateMode:'allow',
-			pickTime:false,
 		  isAllowToShow:function(d, parseDateFn){
 		    return (d.valueOf() !== parseDateFn('17/03/2013 00:00:00').valueOf());
 		  }
